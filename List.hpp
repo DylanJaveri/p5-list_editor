@@ -272,7 +272,7 @@ public:
 
   // return an Iterator pointing to the first element
   Iterator begin() const {
-    return Iterator(//what?? ,first);
+    return Iterator(this ,first);
   }
 
   // return an Iterator pointing to "past the end"
@@ -285,7 +285,8 @@ public:
   //EFFECTS: Removes a single element from the list container.
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
-  Iterator erase(Iterator i);
+  Iterator erase(Iterator i) {
+  }
 
   //REQUIRES: i is a valid iterator associated with this list
   //EFFECTS: Inserts datum before the element at the specified position.
