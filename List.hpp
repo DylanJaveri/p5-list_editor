@@ -48,6 +48,7 @@ public:
     p->datum = datum;
     p->next = first;
     first = p;
+    size++;
   }
 
   //EFFECTS:  inserts datum into the back of the list
@@ -60,6 +61,7 @@ public:
     }
     else {
     last = p;}
+    size++;
   }
 
   //REQUIRES: list is not empty
@@ -70,6 +72,7 @@ public:
     Node *dead = first;
     first = first->next;
     delete dead;
+    size--;
   }
 
   //REQUIRES: list is not empty
@@ -80,6 +83,7 @@ public:
     Node *dead = last;
     last = last->prev;
     delete dead;
+    size--;
   }
 
   //MODIFIES: invalidates all iterators to the removed elements
@@ -88,12 +92,37 @@ public:
     while (!empty()) {
       pop_front();
     }
+    size = 0;
   }
 
   // You should add in a default constructor, destructor, copy constructor,
   // and overloaded assignment operator, if appropriate. If these operations
   // will work correctly without defining these, you should omit them. A user
   // of the class must be able to create, copy, assign, and destroy Lists.
+  
+  //default constructor
+  List() : first(nullptr), last(nullptr), size(0) {}
+  
+  //destructor
+  ~List() {
+    while (!empty()) {
+      pop_front();
+    }
+  }
+
+  //copy constructor
+  List(const List &other) : List() {
+    copy_all(other);
+  }
+
+  //overloaded assignment operator
+  List & operator=(const List &rhs){
+    if (this != &rhs) {
+      pop_all();
+      copy_all(rhs);
+    }
+    return *this;
+  }
 
 private:
   //a private type
@@ -107,12 +136,14 @@ private:
   //EFFECTS:  copies all nodes from other to this
   void copy_all(const List<T> &other){
     assert(empty());
-    //not done
+    for (Node *node_ptr = other.first; node_ptr; node_ptr = node_ptr->next) {
+      push_front(node_ptr->datum);
+    }
   }
 
   Node *first;   // points to first Node in list, or nullptr if list is empty
   Node *last;    // points to last Node in list, or nullptr if list is empty
-  int size = last - first;
+  int size;
 public:
   ////////////////////////////////////////
   class Iterator {
