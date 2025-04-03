@@ -17,40 +17,78 @@ class List {
 public:
 
   //EFFECTS:  returns true if the list is empty
-  bool empty() const;
+  bool empty() const {
+    return !first;
+  }
 
   //EFFECTS: returns the number of elements in this List
   //HINT:    Traversing a list is really slow. Instead, keep track of the size
   //         with a private member variable. That's how std::list does it.
-  int size() const;
+  int size() const {
+    return size;
+  }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
-  T & front();
+  T & front() {
+    assert(!empty());
+    return first->datum; 
+  }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the last element in the list by reference
-  T & back();
+  T & back() {
+    assert(!empty());
+    return last->datum; 
+  }
 
   //EFFECTS:  inserts datum into the front of the list
-  void push_front(const T &datum);
+  void push_front(const T &datum) {
+    Node *p = new Node;
+    p->datum = datum;
+    p->next = first;
+    first = p;
+  }
 
   //EFFECTS:  inserts datum into the back of the list
-  void push_back(const T &datum);
+  void push_back(const T &datum) {
+    Node *p = new Node;
+    p->datum = datum;
+    p->next = first;
+    if (empty()) {
+      first = last = new_node;
+    }
+    else {
+    last = p;}
+  }
 
   //REQUIRES: list is not empty
   //MODIFIES: invalidates all iterators to the removed element
   //EFFECTS:  removes the item at the front of the list
-  void pop_front();
+  void pop_front() {
+    assert(!empty());
+    Node *dead = first;
+    first = first->next;
+    delete dead;
+  }
 
   //REQUIRES: list is not empty
   //MODIFIES: invalidates all iterators to the removed element
   //EFFECTS:  removes the item at the back of the list
-  void pop_back();
+  void pop_back() {
+    assert(!empty());
+    Node *dead = last;
+    last = last->prev;
+    delete dead;
+  }
 
   //MODIFIES: invalidates all iterators to the removed elements
   //EFFECTS:  removes all items from the list
-  void clear();
+  void clear() {
+    while (!empty()) {
+      pop_front();
+    }
+  }
 
   // You should add in a default constructor, destructor, copy constructor,
   // and overloaded assignment operator, if appropriate. If these operations
@@ -67,11 +105,14 @@ private:
 
   //REQUIRES: list is empty
   //EFFECTS:  copies all nodes from other to this
-  void copy_all(const List<T> &other);
+  void copy_all(const List<T> &other){
+    assert(empty());
+    //not done
+  }
 
   Node *first;   // points to first Node in list, or nullptr if list is empty
   Node *last;    // points to last Node in list, or nullptr if list is empty
-
+  int size = last - first;
 public:
   ////////////////////////////////////////
   class Iterator {
@@ -81,14 +122,16 @@ public:
     // Add a default constructor here. The default constructor must set both
     // pointer members to null pointers.
 
-
+    Iterator() : list_ptr(nullptr), node_ptr(nullptr);
 
     // Add custom implementations of the destructor, copy constructor, and
     // overloaded assignment operator, if appropriate. If these operations
     // will work correctly without defining these, you should omit them. A user
     // of the class must be able to copy, assign, and destroy Iterators.
 
-
+    Iterator(const Iterator &other):
+      list_ptr(other.list_ptr), node_ptr(other.node_ptr)
+    {}
 
     // Your iterator should implement the following public operators:
     // *, ++ (both prefix and postfix), == and !=.
@@ -109,6 +152,31 @@ public:
     // Note: comparing both the list and node pointers should be
     // sufficient to meet these requirements.
 
+    T & operator*() const {
+      assert(node_ptr);  
+      return node_ptr->datum;
+    }
+
+    typename operator++() {
+      assert(node_ptr);
+      node_ptr = node_ptr->next;
+      return *this;
+    }
+
+    typename operator++(int) {
+      assert(node_ptr);
+      Iterator tmp = *this;              
+      node_ptr = node_ptr->next;
+      return tmp;                         
+    }
+
+    bool operator==(Iterator rhs) const {
+      return node_ptr == rhs.node_ptr;
+    }
+    
+    bool operator!=(Iterator rhs) const {
+      return node_ptr != rhs.node_ptr;
+    }
 
 
     // Type aliases required to work with STL algorithms. Do not modify these.
@@ -166,16 +234,20 @@ public:
 
 
     // construct an Iterator at a specific position in the given List
-    Iterator(const List *lp, Node *np);
+    Iterator(const List *lp, Node *np) : list_ptr(lp), node_ptr(np);
 
   };//List::Iterator
   ////////////////////////////////////////
 
   // return an Iterator pointing to the first element
-  Iterator begin() const;
+  Iterator begin() const {
+    return Iterator(//what?? ,first);
+  }
 
   // return an Iterator pointing to "past the end"
-  Iterator end() const;
+  Iterator end() const {
+    return Iterator();
+  }
 
   //REQUIRES: i is a valid, dereferenceable iterator associated with this list
   //MODIFIES: invalidates all iterators to the removed element
