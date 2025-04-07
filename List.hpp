@@ -286,40 +286,34 @@ public:
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
   Iterator erase(Iterator i) {
-  // The node pointed to by the iterator
-  Node *to_delete = i.node_ptr;
-  
-  // Ensure this is a valid iterator associated with this list
-  assert(i.list_ptr == this && to_delete);
-  
-  // Get the next node before deletion
-  Node *next_node = to_delete->next;
-  
-  // Handle case where node to erase is the first node
-  if (to_delete == first) {
-    first = next_node;
-    if (next_node) {
-      next_node->prev = nullptr;
-    } else {
-      // List becomes empty
-      last = nullptr;
+    Node *deleteValue = i.node_ptr;
+    Node *nextValue = deleteValue -> next;
+    Node *prevValue = deleteValue -> prev;
+
+    if (deleteValue == first){
+      first = nextValue;
+      if (nextValue){
+        nextValue -> prev = nullptr;
+      }
+      else{
+        last = nullptr;
+      }
     }
-  } 
-  // Handle case where node to erase is the last node
-  else if (to_delete == last) {
-    last = to_delete->prev;
-    last->next = nullptr;
-  } 
-  // Handle case where node to erase is in the middle
-  else {
-    to_delete->prev->next = next_node;
-    next_node->prev = to_delete->prev;
-  }
-  
-  delete to_delete;
-  size--;
-  
-  return Iterator(this, next_node);
+
+    else if (deleteValue == last){
+      last = prevValue;
+      last -> next = nullptr;
+    }
+
+    else {
+     prevValue -> next = nextValue;
+     nextValue -> prev = deleteValue -> prev;
+    }
+
+    delete deleteValue;
+    size--;
+
+    return Iterator(this, nextValue);
 }
 
   //REQUIRES: i is a valid iterator associated with this list
