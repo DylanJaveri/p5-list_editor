@@ -319,7 +319,43 @@ public:
   //REQUIRES: i is a valid iterator associated with this list
   //EFFECTS: Inserts datum before the element at the specified position.
   //         Returns an iterator to the the newly inserted element.
-  Iterator insert(Iterator i, const T &datum);
+  Iterator insert(Iterator i, const T &datum){
+    Node *newNode = new Node;
+    newNode -> datum = datum;
+    
+    if (i.node_ptr == nullptr){
+      
+      newNode -> next = nullptr;
+      if (empty()) {
+          newNode -> prev = nullptr;
+          first = newNode;
+      } 
+        
+      else {
+          newNode -> prev = last;
+          last -> next = newNode;
+      }
+        
+        last = newNode;
+    }
+
+    else if (i.node_ptr == first) {
+        newNode->next = first;
+        newNode->prev = nullptr;
+        first -> prev = newNode;
+        first = newNode;
+    }
+
+    else { 
+        newNode -> next = i.node_ptr;
+        newNode -> prev = i.node_ptr -> prev;
+        i.node_ptr -> prev -> next = newNode;
+        i.node_ptr -> prev = newNode;
+    }
+    
+    size++;
+    return Iterator(this, newNode);
+  }
 
 };//List
 
