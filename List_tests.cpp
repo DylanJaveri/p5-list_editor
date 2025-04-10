@@ -125,10 +125,10 @@ TEST(test_erase4){
     list.push_back(1084);
 
     auto it = list.begin();
+    it++;
+    it++;
+    it++;
     list.erase(it);
-    it++;
-    it++;
-    it++;
     auto newValue = list.begin();
     ASSERT_EQUAL(*newValue, 16);
     newValue++;
@@ -151,11 +151,11 @@ TEST(test_erase5){
     list.push_back(1084);
 
     auto it = list.begin();
+    it++;
+    it++;
+    it++;
+    it++;
     list.erase(it);
-    it++;
-    it++;
-    it++;
-    it++;
     auto newValue = list.begin();
     ASSERT_EQUAL(*newValue, 16);
     newValue++;
@@ -178,12 +178,12 @@ TEST(test_erase6){
     list.push_back(1084);
 
     auto it = list.begin();
+    it++;
+    it++;
+    it++;
+    it++;
+    it++;
     list.erase(it);
-    it++;
-    it++;
-    it++;
-    it++;
-    it++;
     auto newValue = list.begin();
     ASSERT_EQUAL(*newValue, 16);
     newValue++;
@@ -195,29 +195,6 @@ TEST(test_erase6){
     newValue++;
     ASSERT_EQUAL(*newValue, 187);
     newValue++;
-}
-
-TEST(test_erase1){
-    List<int> list;
-    list.push_back(16);
-    list.push_back(83);
-    list.push_back(47);
-    list.push_back(1);
-    list.push_back(187);
-    list.push_back(1084);
-
-    auto it = list.begin();
-    list.erase(it);
-    auto newValue = list.begin();
-    ASSERT_EQUAL(*newValue, 83);
-    newValue++;
-    ASSERT_EQUAL(*newValue, 47);
-    newValue++;
-    ASSERT_EQUAL(*newValue, 1);
-    newValue++;
-    ASSERT_EQUAL(*newValue, 187);
-    newValue++;
-    ASSERT_EQUAL(*newValue, 1084);
 }
 
 TEST(test_insert){
@@ -252,7 +229,7 @@ TEST(test_size){
     list.push_back(8);
     list.push_back(43);
     list.push_back(108);
-    list.push_back(120857084357);
+    list.push_back(1208);
     ASSERT_EQUAL(list.size(), 5);
 }
 
@@ -262,9 +239,9 @@ TEST(test_front_and_back){
     list.push_back(8);
     list.push_back(43);
     list.push_back(108);
-    list.push_back(120857084357);
+    list.push_back(1208);
     ASSERT_EQUAL(list.front(), -17);
-    ASSERT_EQUAL(list.back(), 120857084357);
+    ASSERT_EQUAL(list.back(), 1208);
 }
 
 TEST(test_pop_front){
@@ -273,7 +250,7 @@ TEST(test_pop_front){
     list.push_back(8);
     list.push_back(43);
     list.push_back(108);
-    list.push_back(120857084357);
+    list.push_back(1208);
     list.pop_front();
     auto it = list.begin();
     ASSERT_EQUAL(*it, 8);
@@ -286,7 +263,7 @@ TEST(test_pop_back){
     list.push_back(8);
     list.push_back(43);
     list.push_back(108);
-    list.push_back(120857084357);
+    list.push_back(1208);
     list.pop_back();
     auto it = list.end();
     it--;
@@ -300,26 +277,30 @@ TEST(test_clear){
     list.push_back(8);
     list.push_back(43);
     list.push_back(108);
-    list.push_back(120857084357);
+    list.push_back(1208);
     list.clear();
     ASSERT_EQUAL(list.empty(), true);
 }
 
 TEST(test_operator){
     List <int> listOne;
+    List <int> listTwo;
+    
+    ASSERT_EQUAL(listOne, listTwo);
+
     listOne.push_back(20);
     listOne.push_back(30);
     listOne.push_back(40);
     listOne.push_back(50);
     
-    List <int> listTwo;
     listTwo.push_back(1);
     listTwo.push_back(2);
 
     listTwo = listOne;
+    
     ASSERT_EQUAL(listTwo.size(), 4);
     
-    auto it = listTWo.begin();
+    auto it = listTwo.begin();
     ASSERT_EQUAL(*it, 20);
     it++;
     ASSERT_EQUAL(*it, 30);
