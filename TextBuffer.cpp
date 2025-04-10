@@ -1,66 +1,89 @@
 
 #include "TextBuffer.hpp"
+#include <list>
+#include <string>
 
-TextBuffer::TextBuffer() : cursor.end(), row(1), column(0), index(0);
+TextBuffer::TextBuffer() : row(1), column(0), index(0) {
+    cursor = data.begin();
+};
 
 bool TextBuffer::forward(){
-    if (!cursor){
+    if (cursor == data.end()){
         return false;
     }
-    else {
-        if (*cursor == "/n") {
-            if (cursor++ == cursor.end()){
-                column++;
-                index++;
-                return true;
-            }
-            else {
+    if (*cursor == '\n') {
+                cursor++;
                 row++;
                 column++;
                 index++;
                 return true;
-            }
         }
         else {
+            cursor++;
             column++;
             index++;
             return true;
         }
-    }
 }
 
-bool TextBuffer::backward() {};
-
-void TextBuffer::insert(char c) {
-    cursor.insert(this, c);
-    column++;
-    index++;
-}
-
-void TextBuffer::remove() {
-    if (!cursor){
+bool TextBuffer::backward() {
+    if (index == 0){
         return false;
     }
     else {
-        cursor = cursor.erase(cursor);
+        if (column == 0) {
+            row--;    
+        }
+        cursor--;
+        index--;
+        column = compute_column();
+        return true;
+    }
+}
+
+void TextBuffer::insert(char c) {
+    data.insert(cursor, c);
+    index++;
+    if (c == '\n'){
+        row++;
+        column = 0;
+    }
+    else {
         column++;
     }
 }
 
+bool TextBuffer::remove() {
+    if (cursor == data.end() || *cursor == '\n'){
+        return false;
+    }
+    else {
+        cursor = data.erase(cursor);
+        index--;
+        return true;
+    }
+}
+
 void TextBuffer::move_to_row_start() {
-    while (collumn != 0){
+    while (column != 0){
         backward();
     }
 }
 
  void TextBuffer::move_to_row_end() {
-    while (*cursor != "/n" || cursor != cursor.end()) {
+    while (*cursor != '\n' && cursor != data.end()) {
         forward();
     }
  }
 
- void TextBuffer::move_to_column(int new_collumn){
-
+ void TextBuffer::move_to_column(int new_column){
+    move_to_row_start();
+    while (new_column > column){
+        if (cursor == data.end() || *cursor == '\n'){
+            break;
+        }
+        forward();
+    }
  }
 
  bool TextBuffer::up() {
@@ -72,23 +95,23 @@ void TextBuffer::move_to_row_start() {
         move_to_row_start();
         backward();
         move_to_column(new_column);
+        return true;
     }
  }
 
  bool TextBuffer::down() {
-    if (row == x){   //how do I identify if the row is the last one?
+    int new_column = column;
+    move_to_row_end();
+    if (!forward()) {
+        move_to_column(new_column);
         return false;
     }
-    else {
-        int new_column = column;
-        move_to_row_end();
-        forward();
-        move_to_column(new_column);
-    }
+    move_to_column(new_column);
+    return true;
  }
 
  bool TextBuffer::is_at_end() const {
-    if (!cursor && cursor--){
+    if (cursor == data.end()){
         return true;
     }
     else {
@@ -116,7 +139,22 @@ void TextBuffer::move_to_row_start() {
     return data.size();
  }
 
+ int TextBuffer::compute_column() const {
+    if (cursor == data.end()) {
+        return column;
+    }
+    Iterator new_cursor = cursor;
+    int computedColumn = 0;
+    while (new_cursor != data.begin()) {
+        --new_cursor;
+        if (*new_cursor == '\n') {
+            break;
+        }
+        ++computedColumn;
+    }
+    return computedColumn;
+ }
 
-
-
-
+ std::string TextBuffer::stringify() const {
+    return std::string(data.begin(), data.end());
+ }
